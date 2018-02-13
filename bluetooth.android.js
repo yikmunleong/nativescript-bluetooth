@@ -375,6 +375,21 @@ Bluetooth._MyGattCallback = android.bluetooth.BluetoothGattCallback.extend({
 
   onDescriptorWrite: function (bluetoothGatt, bluetoothGattDescriptor, status) {
     console.log("------- _MyGattCallback.onDescriptorWrite");
+
+    // https://github.com/kanayo/nativescript-bluetooth/commit/a6a485d021ba44a93846d2315cc98d2ebd6d7f96
+
+    var device = bluetoothGatt.getDevice();
+    var stateObject = Bluetooth._connections[device.getAddress()];
+    if (!stateObject) {
+      Bluetooth._disconnect(bluetoothGatt); 
+      return;
+    }
+
+    if (stateObject.onDescriptorWritePromise) {
+      stateObject.onDescriptorWritePromise({
+        descriptorUUID: bluetoothGattDescriptor.getUuid()
+      });
+    }
   },
 
   onReadRemoteRssi: function (bluetoothGatt, rssi, status) {
@@ -889,7 +904,7 @@ Bluetooth.startNotifying = function (arg) {
         var stateObject = Bluetooth._connections[arg.peripheralUUID];
         stateObject.onNotifyCallback = cb;
         console.log("--- notifying");
-        resolve();
+        stateObject.onDescriptorWritePromise = resolve;
       } else {
         reject("Failed to set client characteristic notification for " + characteristicUUID);
       }
