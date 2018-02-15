@@ -175,6 +175,11 @@ var CBPeripheralDelegateImpl = (function (_super) {
   CBPeripheralDelegateImpl.prototype.peripheralDidUpdateNotificationStateForCharacteristicError = function (peripheral, characteristic, error) {
     console.log("----- delegate peripheral:didUpdateNotificationStateForCharacteristic:error, error: " + error);
     // alert("peripheralDidUpdateNotificationStateForCharacteristicError");
+    if (this._onUpdateNotificationState) {
+      this._onUpdateNotificationState({
+        characteristicUUID: characteristic.UUID.UUIDString
+      });
+    }
     if (error) {
       console.log("----- delegate peripheral:didUpdateNotificationStateForCharacteristic:error, " + error);
     } else {
@@ -657,8 +662,8 @@ Bluetooth.startNotifying = function (arg) {
 
       // TODO we could (should?) make this characteristic-specific
       wrapper.peripheral.delegate._onNotifyCallback = cb;
+      wrapper.peripheral.delegate._onUpdateNotificationState = resolve;
       wrapper.peripheral.setNotifyValueForCharacteristic(true, wrapper.characteristic);
-      resolve();
     } catch (ex) {
       console.log("Error in Bluetooth.startNotifying: " + ex);
       reject(ex);
