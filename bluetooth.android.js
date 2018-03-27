@@ -618,6 +618,7 @@ Bluetooth.connect = function (arg) {
           onDisconnected: arg.onDisconnected,
           device: bluetoothGatt // TODO rename device to gatt?
         };
+        resolve();
       }
     } catch (ex) {
       console.log("Error in Bluetooth.connect: " + ex);
