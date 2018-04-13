@@ -152,8 +152,11 @@ var CBPeripheralDelegateImpl = (function (_super) {
         console.log("No _onReadPromise found!");
       }
     } else {
-      if (this._onNotifyCallback) {
-        this._onNotifyCallback(result);
+      var characteristicUUID = characteristic.UUID.UUIDString.toLowerCase();
+      var onNotifyCallback = this._onNotifyCallback && this._onNotifyCallback[characteristicUUID];
+
+      if (onNotifyCallback) {
+        onNotifyCallback(result);
       } else {
         console.log("^^^^^^^^ CALLBACK IS GONE!");
       }
@@ -661,7 +664,16 @@ Bluetooth.startNotifying = function (arg) {
       };
 
       // TODO we could (should?) make this characteristic-specific
-      wrapper.peripheral.delegate._onNotifyCallback = cb;
+
+      var characteristicUUID = wrapper.characteristic.UUID.UUIDString.toLowerCase();
+      console.log("Setting notification callback for characteristic: " + characteristicUUID);
+
+      if (! wrapper.peripheral.delegate._onNotifyCallback) {
+        wrapper.peripheral.delegate._onNotifyCallback = {};
+      }
+
+      wrapper.peripheral.delegate._onNotifyCallback[characteristicUUID] = cb;
+      
       wrapper.peripheral.delegate._onUpdateNotificationState = resolve;
       wrapper.peripheral.setNotifyValueForCharacteristic(true, wrapper.characteristic);
     } catch (ex) {
@@ -682,6 +694,9 @@ Bluetooth.stopNotifying = function (arg) {
         return;
       }
 
+      var characteristicUUID = wrapper.characteristic.UUID.UUIDString.toLowerCase();
+      delete wrapper.peripheral.delegate._onNotifyCallback[characteristicUUID];
+      
       var peripheral = Bluetooth._findPeripheral(arg.peripheralUUID);
       // peripheral.delegate = null;
       peripheral.setNotifyValueForCharacteristic(false, wrapper.characteristic);
