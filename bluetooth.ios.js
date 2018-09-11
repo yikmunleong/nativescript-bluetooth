@@ -251,6 +251,11 @@ var CBCentralManagerDelegateImpl = (function (_super) {
     if (!peri) {
       Bluetooth._state.peripheralArray.addObject(peripheral);
       if (Bluetooth._state.onDiscovered) {
+        var localName = null;
+        if(advData.objectForKey(CBAdvertisementDataLocalNameKey)) {
+          localName = advData.objectForKey(CBAdvertisementDataLocalNameKey);
+          console.log("----- delegate centralManager:didDiscoverPeripheral, localName: " + localName);
+        }
         var manufacturerId, manufacturerData;
         if (advData.objectForKey(CBAdvertisementDataManufacturerDataKey)) {
           var manufacturerIdBuffer = Bluetooth._toArrayBuffer(advData.objectForKey(CBAdvertisementDataManufacturerDataKey).subdataWithRange(NSMakeRange(0, 2)));
@@ -260,7 +265,7 @@ var CBCentralManagerDelegateImpl = (function (_super) {
 
         Bluetooth._state.onDiscovered({
           UUID: peripheral.identifier.UUIDString,
-          name: peripheral.name,
+          name: localName ? localName : peripheral.name,
           RSSI: RSSI,
           state: Bluetooth._getState(peripheral.state),
           manufacturerId: manufacturerId,
