@@ -3,7 +3,7 @@ var Bluetooth = require("./bluetooth-common");
 Bluetooth._state = {
   manager: null,
   centralDelegate: null,
-  peripheralArray: null,
+  peripheralArray: NSMutableArray.new(),
   connectCallbacks: {},
   disconnectCallbacks: {},
   onDiscovered: null
@@ -396,7 +396,7 @@ Bluetooth.startScanning = function (arg) {
         reject("Bluetooth is not enabled");
         return;
       }
-      Bluetooth._state.peripheralArray = NSMutableArray.new();
+
 
       // TODO actualy, should init the delegate here with this as the callback (see 'onConnected') --> but first test if that works
       Bluetooth._state.onDiscovered = arg.onDiscovered;
