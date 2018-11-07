@@ -314,8 +314,7 @@ var CBCentralManagerDelegateImpl = (function (_super) {
     } else {
       console.log("----- !!! no disconnect callback found");
     }
-    var foundAt = Bluetooth._state.peripheralArray.indexOfObject(peripheral);
-    Bluetooth._state.peripheralArray.removeObject(foundAt);
+
   };
 
   CBCentralManagerDelegateImpl.prototype.centralManagerDidFailToConnectPeripheralError = function (central, peripheral, error) {
