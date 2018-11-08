@@ -383,8 +383,8 @@ Bluetooth.isBluetoothEnabled = function () {
 
 Bluetooth.enable = function () {
   return new Promise(function (resolve, reject) {
-    console.log("Not possible on iOS");
-    reject("Not possible - you may want to choose to not call this function on iOS.");
+    console.log("Enable Bluetooth not possible on iOS");
+    reject("Bluetooth is not enabled!");
   });
 };
 
