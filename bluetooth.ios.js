@@ -497,7 +497,8 @@ Bluetooth.disconnect = function (arg) {
         if (peripheral.state != CBPeripheralStateDisconnected) {
           Bluetooth._state.manager.cancelPeripheralConnection(peripheral);
           peripheral.delegate = null;
-          // TODO remove from the peripheralArray as well
+          var foundAt = Bluetooth._state.peripheralArray.indexOfObject(peripheral);
+          Bluetooth._state.peripheralArray.removeObject(foundAt);
         }
         resolve();
       }
